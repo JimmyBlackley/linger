@@ -11,9 +11,11 @@ interface Props {
 
 export const Timeline = ({ className }: Props): JSX.Element => {
   return (
+    // outer box
     <div
-      className={`flex flex-col h-[200px] items-start justify-center gap-2.5 p-[15px] relative border border-solid border-black ${className}`}
+      className={`flex flex-col h-200px items-start justify-center gap-2.5 p-[15px] relative border border-solid border-black ${className}`}
     >
+        {/* // inner shadow box */}
       <div className="relative flex-1 self-stretch w-full grow bg-white rounded-[14px] shadow-[inset_0px_4px_4px_#00000040] overflow-x-scroll" />
 
       <div className="flex h-px items-center justify-end pl-0 pr-[26px] pt-0 pb-[158px] relative self-stretch w-full mb-[-1.00px]">
