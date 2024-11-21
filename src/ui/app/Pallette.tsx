@@ -1,29 +1,34 @@
-/*
-We're constantly improving the code you see. 
-Please share your feedback here: https://form.asana.com/?k=uvp-HPgd3_hyoXRBw1IcNg&d=1152665201300829
-*/
+"use client";
 
 import React from "react";
 import { ModuleCard } from "./ModuleCard";
+import { v4 as uuidv4 } from "uuid";
 
 interface Props {
-  className: any;
+	className: string;
 }
 
 export const Pallette = ({ className }: Props): JSX.Element => {
-  return (
-    <div
-      className={`flex flex-col w-[276px] items-start gap-2.5 p-[15px] relative h-[958px] border border-solid border-black ${className}`}
-    >
-      <div className="flex flex-col items-center gap-3.5 px-0 py-[15px] relative flex-1 self-stretch w-full grow bg-white rounded-[14px] overflow-hidden shadow-[inset_0px_4px_4px_#00000040]">
-        <ModuleCard />
-        <ModuleCard />
-        <ModuleCard />
-        <ModuleCard />
-        <ModuleCard />
-        <ModuleCard />
-        <ModuleCard />
-      </div>
-    </div>
-  );
+	let defaultModuleList = [
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+		{ id: uuidv4() },
+	];
+	const [moduleList, setModuleList] = React.useState(defaultModuleList);
+	return (
+		<div className={`p-[15px] ${className}`}>
+			<div className="flex flex-col items-center gap-4 px-0 py-[15px] h-full w-full bg-white rounded-[14px] overflow-y-auto shadow-[inset_0px_4px_4px_#00000040]">
+				{moduleList.map((module) => {
+					return <ModuleCard key={module.id} className={"flex-shrink-0"} />;
+				})}
+			</div>
+		</div>
+	);
 };

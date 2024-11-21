@@ -4,47 +4,25 @@ import { Pallette } from "@/ui/app/Pallette";
 import { Timeline } from "@/ui/app/Timeline";
 
 const App = (): JSX.Element => {
-  return (
-    <div className="flex flex-col min-h-screen items-start justify-center relative bg-variable-collection-bg-grey">
-      <div className="flex h-[66px] items-start gap-2.5 p-2.5 relative self-stretch w-full">
-        <div className="gap-2.5 pl-0 pr-[59px] py-0 self-stretch inline-flex items-center relative flex-[0_0_auto]">
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Products"
-            state="active"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Solutions"
-            state="default"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Community"
-            state="default"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Resources"
-            state="default"
-          />
-        </div>
-
-        <div className="relative flex-1 self-stretch grow" />
-
-        <div className="relative self-stretch w-[264px] bg-white rounded-[27px]" />
-      </div>
-
-      <div className="flex items-start relative flex-1 self-stretch w-full grow">
-        <Pallette className="!self-stretch !h-[unset]" />
-        <div className="flex flex-col items-start relative flex-1 self-stretch grow">
-          <div className="relative flex-1 self-stretch w-full grow border border-solid border-black" />
-
-          <Timeline className="!self-stretch !w-full" />
-        </div>
-      </div>
-    </div>
-  );
+	return (
+		<div className="grid grid-cols-[30vw_1fr] grid-rows-[8vh_72vh_20vh] h-screen bg-variable-collection-bg-grey border">
+			{/* header container*/}
+			<div className="flex justify-between items-stretch gap-2.5 p-2.5  w-full col-span-2 border-b border-black ">
+				<div className="gap-2.5 pl-0 py-0 inline-flex items-center relative flex-[0_0_auto]">
+					<NavPill className="!flex-[0_0_auto]" label="Products" state="active" />
+					<NavPill className="!flex-[0_0_auto]" label="Solutions" state="default" />
+					<NavPill className="!flex-[0_0_auto]" label="Community" state="default" />
+					<NavPill className="!flex-[0_0_auto]" label="Resources" state="default" />
+				</div>
+				{/* place holder for search bar */}
+				<div className="w-[264px] bg-white rounded-[27px]" />
+			</div>
+			<Pallette className="w-full row-span-2 border-r border-black" />
+			{/* place holder for working area */}
+			<div className="h-full w-full" />
+			<Timeline className="!self-stretch !w-full border-t border-black" />
+		</div>
+	);
 };
 
 export default App;
