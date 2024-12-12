@@ -6,10 +6,10 @@ Please share your feedback here: https://form.asana.com/?k=uvp-HPgd3_hyoXRBw1IcN
 import React from "react";
 
 interface Props {
-	className: string;
+	className?: string;
 }
 
-export const Timeline = ({ className }: Props): JSX.Element => {
+function Timeline ({ className }: Props): JSX.Element {
 	return (
 		/* outer box */
 		<div
@@ -20,3 +20,4 @@ export const Timeline = ({ className }: Props): JSX.Element => {
 		</div>
 	);
 };
+export default Timeline;

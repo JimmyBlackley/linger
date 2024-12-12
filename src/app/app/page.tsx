@@ -1,7 +1,7 @@
 import React from "react";
-import { NavPill } from "@/ui/app/NavPill";
-import { Pallette } from "@/ui/app/Pallette";
-import { Timeline } from "@/ui/app/Timeline";
+import NavPill from "@/ui/app/NavPill";
+import Pallette from "@/ui/app/Pallette";
+import Timeline from "@/ui/app/Timeline";
 
 const App = (): JSX.Element => {
 	return (
