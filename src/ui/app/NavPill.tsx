@@ -8,14 +8,14 @@ import React from "react";
 interface Props {
   label: string;
   state: "hover" | "active" | "default";
-  className: any;
+  className?: string;
 }
 
-export const NavPill = ({
+function NavPill ({
   label = "Link",
   state,
   className,
-}: Props): JSX.Element => {
+}: Props): JSX.Element {
   return (
     <div
       className={`inline-flex items-center gap-[var(--size-space-200)] pt-[var(--size-space-200)] pr-[var(--size-space-200)] pb-[var(--size-space-200)] pl-[var(--size-space-200)] rounded-[var(--size-radius-200)] justify-center relative ${state === "active" ? "bg-color-background-brand-tertiary" : (state === "hover") ? "bg-color-background-default-default-hover" : ""} ${className}`}
@@ -28,3 +28,4 @@ export const NavPill = ({
     </div>
   );
 };
+export default NavPill;
