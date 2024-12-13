@@ -1,9 +1,11 @@
+"use client";
 import React from "react";
 import NavPill from "@/ui/app/NavPill";
 import Pallette from "@/ui/app/Pallette";
 import Timeline from "@/ui/app/Timeline";
+import ContentArea from "@/ui/app/ContentArea";
 
-const App = (): JSX.Element => {
+function App(): JSX.Element {
 	return (
 		<div className="grid grid-cols-[30vw_1fr] grid-rows-[8vh_72vh_20vh] h-screen bg-variable-collection-bg-grey border">
 			{/* header container*/}
@@ -19,10 +21,10 @@ const App = (): JSX.Element => {
 			</div>
 			<Pallette className="w-full row-span-2 border-r border-black" />
 			{/* place holder for working area */}
-			<div className="h-full w-full" />
+			<ContentArea></ContentArea>
 			<Timeline className="!self-stretch !w-full border-t border-black" />
 		</div>
 	);
-};
+}
 
 export default App;
