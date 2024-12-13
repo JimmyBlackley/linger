@@ -13,13 +13,25 @@ interface Props {
 function DropdownButton({ children, className, currentActiveButton, setCurrentActiveButton }: Props): JSX.Element {
 	const [isActive, setIsActive] = useState(false);
 	const id = useRef(uuidv4());
+	const dropdownAreaRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (currentActiveButton !== id.current) {
 			setIsActive(false);
 		}
 	}, [currentActiveButton]);
+	useEffect(() => {
+		function outsideClickHandler(event: MouseEvent) {
+			if (dropdownAreaRef.current && !dropdownAreaRef.current.contains(event.target as Node)) {
+				setIsActive(false);
+			}
+		}
+		document.addEventListener("click", outsideClickHandler);
+		return () => {
+			document.removeEventListener("click", outsideClickHandler);
+		}
+	}, [dropdownAreaRef])
 	return (
-		<div className="relative">
+		<div className="relative" ref={dropdownAreaRef}>
 			<motion.button
 				variants={{
 					hover: { backgroundColor: "#f5f5f5" },
