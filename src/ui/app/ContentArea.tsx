@@ -43,7 +43,12 @@ function ContentArea({ children }: Props): JSX.Element {
 		}
 	}
 	return (
-		<DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd} collisionDetection={closestCorners}>
+		<DndContext
+			id={"unique-dnd-context-id-to-fix-nextjs-hydration-error-for-some-reason-dont-touch"}
+			onDragStart={handleDragStart}
+			onDragEnd={handleDragEnd}
+			collisionDetection={closestCorners}
+		>
 			<SortableContext items={content}>
 				<div className="grid grid-cols-3 auto-rows-min gap-3 p-3 overflow-y-auto">
 					{content.map((item) => {
