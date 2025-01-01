@@ -6,10 +6,11 @@ interface Props {
 	className?: string;
 	children?: React.ReactNode;
 	id: string;
+	type: "content" | "module";
 }
 
-export function SortableCard({ className, children, id }: Props): JSX.Element {
-	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id });
+export function SortableCard({ className, children, id, type }: Props): JSX.Element {
+	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: id, data: {type: type}});
 	const style = {
 		transform: CSS.Transform.toString(transform),
 		transition,

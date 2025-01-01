@@ -1,19 +1,33 @@
 "use client";
 import React, { useState } from "react";
-import { closestCorners, DndContext, DragEndEvent, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
+import { closestCorners, DndContext, DragEndEvent, DragOverlay, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
 import NavPill from "@/app/ui/app/NavPill";
 import Pallette from "@/app/ui/app/Pallette";
 import Timeline from "@/app/ui/app/Timeline";
 import ContentArea from "@/app/ui/app/ContentArea";
+import { Content, Module } from "../types";
+import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 
 function App(): JSX.Element {
-	const [content, setContent] = useState([
+	const [contentList, setContentList] = useState<Content[]>([
 		{ id: uuidv4(), name: "This is a module filled with content" },
 		{ id: uuidv4(), name: "Test content" },
 		{ id: uuidv4(), name: "Another test content" },
 		{ id: uuidv4(), name: "Yet another test content" },
+	]);
+	const [moduleList, setModuleList] = useState<Module[]>([
+		{ id: uuidv4(), name: "Module 1" },
+		{ id: uuidv4(), name: "Module 2" },
+		{ id: uuidv4(), name: "Module 3" },
+		{ id: uuidv4(), name: "Module 4" },
+		{ id: uuidv4(), name: "Module 5" },
+		{ id: uuidv4(), name: "Module 6" },
+		{ id: uuidv4(), name: "Module 7" },
+		{ id: uuidv4(), name: "Module 8" },
+		{ id: uuidv4(), name: "Module 9" },
+		{ id: uuidv4(), name: "Module 10" },
 	]);
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 	function handleDragStart(e: DragStartEvent) {
@@ -23,12 +37,36 @@ function App(): JSX.Element {
 	function handleDragEnd(e: DragEndEvent) {
 		const { active, over } = e;
 		setActiveId(null);
-		if (over && active.id !== over.id) {
-			setContent((content) => {
-				const oldIndex = content.findIndex((item) => item.id === active.id);
-				const newIndex = content.findIndex((item) => item.id === over.id);
-				return arrayMove(content, oldIndex, newIndex);
-			});
+		if (active.data.current?.type === "content") {
+			if (over && over.data.current?.type === "content") {
+				setContentList((contentList) => {
+					const oldIndex = contentList.findIndex((content) => content.id === active.id);
+					const newIndex = contentList.findIndex((content) => content.id === over.id);
+					return arrayMove(contentList, oldIndex, newIndex);
+				});
+			}
+		}
+		if (active.data.current?.type === "module") {
+			if (over && over.data.current?.type === "module") {
+				setModuleList((moduleList) => {
+					const oldIndex = moduleList.findIndex((module) => module.id === active.id);
+					const newIndex = moduleList.findIndex((module) => module.id === over.id);
+					return arrayMove(moduleList, oldIndex, newIndex);
+				});
+			}
+		}
+	}
+	function handleDragOverlay() {
+		let activeCard = contentList.find((content) => content.id === activeId);
+		if (!activeCard) {
+			activeCard = moduleList.find((module) => module.id === activeId);
+		}
+		if (activeCard) {
+			return (
+				<DragOverlayCard key={activeCard.id} className={`w-full`}>
+					{activeCard.name}
+				</DragOverlayCard>
+			);
 		}
 	}
 	return (
@@ -51,10 +89,14 @@ function App(): JSX.Element {
 				onDragEnd={handleDragEnd}
 				collisionDetection={closestCorners}
 			>
-				<Pallette className="w-full row-span-2 border-r border-black" />
-				{/* place holder for working area */}
-				<ContentArea content={content} setContent={setContent} activeId={activeId}></ContentArea>
+				<Pallette
+					moduleList={moduleList}
+					activeId={activeId}
+					className="w-full row-span-2 border-r border-black"
+				/>
+				<ContentArea contentList={contentList} activeId={activeId}></ContentArea>
 				<Timeline className="!self-stretch !w-full border-t border-black" />
+				<DragOverlay>{handleDragOverlay()}</DragOverlay>
 			</DndContext>
 		</div>
 	);

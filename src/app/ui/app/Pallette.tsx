@@ -1,28 +1,18 @@
 import React, { useState } from "react";
 import { motion } from "motion/react";
-import ModuleCard from "./ModuleCard";
 import { SortableCard } from "./SortableCard";
-import { v4 as uuidv4 } from "uuid";
 import { DropdownButton } from "./DropdownButton";
-import { Item } from "@/app/types";
+import { Module } from "@/app/types";
+import { SortableContext } from "@dnd-kit/sortable";
+import { DragOverlay, UniqueIdentifier } from "@dnd-kit/core";
+import { DragOverlayCard } from "./DragOverlayCard";
 
 interface Props {
 	className?: string;
+	moduleList: Module[];
+	activeId: UniqueIdentifier | null;
 }
-function Pallette({ className }: Props): JSX.Element {
-	let defaultModuleList = [
-		{ id: uuidv4(), name: "Module 1" },
-		{ id: uuidv4(), name: "Module 2" },
-		{ id: uuidv4(), name: "Module 3" },
-		{ id: uuidv4(), name: "Module 4" },
-		{ id: uuidv4(), name: "Module 5" },
-		{ id: uuidv4(), name: "Module 6" },
-		{ id: uuidv4(), name: "Module 7" },
-		{ id: uuidv4(), name: "Module 8" },
-		{ id: uuidv4(), name: "Module 9" },
-		{ id: uuidv4(), name: "Module 10" },
-	];
-	const [moduleList, setModuleList] = useState<Item[]>(defaultModuleList);
+function Pallette({ className, moduleList, activeId }: Props): JSX.Element {
 	const [currentActiveButtonId, setCurrentActiveButtonId] = useState("");
 	return (
 		<div className={`p-2 flex flex-col gap-2 ${className}`}>
@@ -43,13 +33,20 @@ function Pallette({ className }: Props): JSX.Element {
 				</DropdownButton>
 			</motion.div>
 			<div className="flex flex-col items-center gap-4 px-0 py-[15px] h-full w-full bg-gray-300 rounded-[14px] overflow-y-auto shadow-[inset_0px_4px_4px_#00000040]">
-				{moduleList.map((module) => {
-					return (
-						<SortableCard key={module.id} className={"flex-shrink-0"} id={module.id}>
-							{module.name}
-						</SortableCard>
-					);
-				})}
+				<SortableContext items={moduleList}>
+					{moduleList.map((module) => {
+						return (
+							<SortableCard
+								key={module.id}
+								className={`flex-shrink-0 ${activeId === module.id ? "invisible" : ""}`}
+								type="module"
+								id={module.id}
+							>
+								{module.name}
+							</SortableCard>
+						);
+					})}
+				</SortableContext>
 			</div>
 		</div>
 	);
