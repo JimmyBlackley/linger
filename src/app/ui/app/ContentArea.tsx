@@ -1,6 +1,5 @@
 import { SortableCard } from "./SortableCard";
-import { DragOverlayCard } from "./DragOverlayCard";
-import { DragOverlay, UniqueIdentifier } from "@dnd-kit/core";
+import { UniqueIdentifier, useDroppable } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Content } from "@/app/types";
 
@@ -11,8 +10,9 @@ interface Props {
 }
 
 function ContentArea({ children, contentList, activeId }: Props): JSX.Element {
+	const { setNodeRef } = useDroppable({ id: "contentArea" });
 	return (
-		<>
+		<div ref={setNodeRef}>
 			<SortableContext items={contentList}>
 				<div className="grid grid-cols-3 auto-rows-min gap-3 p-3 overflow-y-auto">
 					{contentList.map((content) => {
@@ -20,7 +20,8 @@ function ContentArea({ children, contentList, activeId }: Props): JSX.Element {
 							<SortableCard
 								key={content.id}
 								id={content.id}
-								type="content"
+								container="contentArea"
+								name={content.name}
 								className={`w-full ${activeId === content.id ? "invisible" : ""}`}
 							>
 								{content.name}
@@ -30,7 +31,7 @@ function ContentArea({ children, contentList, activeId }: Props): JSX.Element {
 					{children}
 				</div>
 			</SortableContext>
-		</>
+		</div>
 	);
 }
 
