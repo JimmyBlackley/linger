@@ -134,7 +134,7 @@ function App(): JSX.Element {
 			</div>
 
 			<DndContext
-				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error-for-some-reason-dont-touch"}
+				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
 				onDragOver={handleDragOver}
