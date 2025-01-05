@@ -1,6 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import { closestCorners, DndContext, DragEndEvent, DragOverlay, DragStartEvent, UniqueIdentifier } from "@dnd-kit/core";
+import {
+	closestCorners,
+	DndContext,
+	DragEndEvent,
+	DragOverEvent,
+	DragOverlay,
+	DragStartEvent,
+	UniqueIdentifier,
+} from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
 import NavPill from "@/app/ui/app/NavPill";
@@ -9,6 +17,9 @@ import Timeline from "@/app/ui/app/Timeline";
 import ContentArea from "@/app/ui/app/ContentArea";
 import { Content, Module } from "../types";
 import { DragOverlayCard } from "../ui/app/DragOverlayCard";
+import { createContent } from "../lib/app/createContent";
+import { addToTimeline } from "../lib/app/addToTimeline";
+import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 
 function App(): JSX.Element {
 	const [contentList, setContentList] = useState<Content[]>([
@@ -16,6 +27,12 @@ function App(): JSX.Element {
 		{ id: uuidv4(), name: "Test content" },
 		{ id: uuidv4(), name: "Another test content" },
 		{ id: uuidv4(), name: "Yet another test content" },
+	]);
+	const [timelineContentList, setTimelineContentList] = useState<Content[]>([
+		{ id: uuidv4(), name: "Timeline Content 1" },
+		{ id: uuidv4(), name: "Timeline Content 2" },
+		{ id: uuidv4(), name: "Timeline Content 3" },
+		{ id: uuidv4(), name: "Timeline Content 4" },
 	]);
 	const [moduleList, setModuleList] = useState<Module[]>([
 		{ id: uuidv4(), name: "Module 1" },
@@ -31,35 +48,68 @@ function App(): JSX.Element {
 	]);
 	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
 	function handleDragStart(e: DragStartEvent) {
-		const { active } = e;
 		setActiveId(e.active.id);
 	}
 	function handleDragEnd(e: DragEndEvent) {
 		const { active, over } = e;
 		setActiveId(null);
-		if (active.data.current?.type === "content") {
-			if (over && over.data.current?.type === "content") {
-				setContentList((contentList) => {
-					const oldIndex = contentList.findIndex((content) => content.id === active.id);
-					const newIndex = contentList.findIndex((content) => content.id === over.id);
-					return arrayMove(contentList, oldIndex, newIndex);
-				});
+		if (over) {
+			/* dragging item from content */
+			if (active.data.current?.container === "contentArea") {
+				if (over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					setContentList((contentList) => {
+						const oldIndex = contentList.findIndex((content) => content.id === active.id);
+						const newIndex = contentList.findIndex((content) => content.id === over.id);
+						return arrayMove(contentList, oldIndex, newIndex);
+					});
+				} else if (over.data.current?.container === "timeline" || over.id === "timeline") {
+					addToTimeline(active.data.current?.name);
+				}
+			}
+			/* dragging item from pallete */
+			if (active.data.current?.container === "pallete") {
+				if (over.data.current?.container === "pallete" || over.id === "pallete") {
+					setModuleList((moduleList) => {
+						const oldIndex = moduleList.findIndex((module) => module.id === active.id);
+						const newIndex = moduleList.findIndex((module) => module.id === over.id);
+						return arrayMove(moduleList, oldIndex, newIndex);
+					});
+				} else if (over && over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					createContent(active.data.current?.name);
+				}
+			}
+			/* dragging item from timeline */
+			if (active.data.current?.container === "timeline") {
+				if (over.data.current?.container === "timeline" || over.id === "timeline") {
+					setTimelineContentList((timelineContentList) => {
+						const oldIndex = timelineContentList.findIndex(
+							(timelineContent) => timelineContent.id === active.id
+						);
+						const newIndex = timelineContentList.findIndex(
+							(timelineContent) => timelineContent.id === over.id
+						);
+						return arrayMove(timelineContentList, oldIndex, newIndex);
+					});
+				} else if (over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					deleteFromTimeline(active.data.current?.name);
+				}
 			}
 		}
-		if (active.data.current?.type === "module") {
-			if (over && over.data.current?.type === "module") {
-				setModuleList((moduleList) => {
-					const oldIndex = moduleList.findIndex((module) => module.id === active.id);
-					const newIndex = moduleList.findIndex((module) => module.id === over.id);
-					return arrayMove(moduleList, oldIndex, newIndex);
-				});
-			}
+	}
+	function handleDragOver(event: DragOverEvent) {
+		const { over } = event;
+		if (over) {
+			console.log(over.data.current?.container);
+			console.log(over.id);
 		}
 	}
 	function handleDragOverlay() {
 		let activeCard = contentList.find((content) => content.id === activeId);
 		if (!activeCard) {
 			activeCard = moduleList.find((module) => module.id === activeId);
+		}
+		if (!activeCard) {
+			activeCard = timelineContentList.find((timelineContent) => timelineContent.id === activeId);
 		}
 		if (activeCard) {
 			return (
@@ -87,7 +137,7 @@ function App(): JSX.Element {
 				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error-for-some-reason-dont-touch"}
 				onDragStart={handleDragStart}
 				onDragEnd={handleDragEnd}
-				collisionDetection={closestCorners}
+				onDragOver={handleDragOver}
 			>
 				<Pallette
 					moduleList={moduleList}
@@ -95,7 +145,11 @@ function App(): JSX.Element {
 					className="w-full row-span-2 border-r border-black"
 				/>
 				<ContentArea contentList={contentList} activeId={activeId}></ContentArea>
-				<Timeline className="!self-stretch !w-full border-t border-black" />
+				<Timeline
+					timelineContentList={timelineContentList}
+					activeId={activeId}
+					className="!self-stretch !w-full border-t border-black"
+				/>
 				<DragOverlay>{handleDragOverlay()}</DragOverlay>
 			</DndContext>
 		</div>
