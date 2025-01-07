@@ -1,13 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import {
-	closestCorners,
+	Active,
 	DndContext,
 	DragEndEvent,
 	DragOverEvent,
 	DragOverlay,
 	DragStartEvent,
-	UniqueIdentifier,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
@@ -46,13 +45,13 @@ function App(): JSX.Element {
 		{ id: uuidv4(), name: "Module 9" },
 		{ id: uuidv4(), name: "Module 10" },
 	]);
-	const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+	const [currentDragCard, setCurrentDragCard] = useState< Active | null>(null);
 	function handleDragStart(e: DragStartEvent) {
-		setActiveId(e.active.id);
+		setCurrentDragCard(e.active);
 	}
 	function handleDragEnd(e: DragEndEvent) {
 		const { active, over } = e;
-		setActiveId(null);
+		setCurrentDragCard(null);
 		if (over) {
 			/* dragging item from content */
 			if (active.data.current?.container === "contentArea") {
@@ -104,12 +103,12 @@ function App(): JSX.Element {
 		}
 	}
 	function handleDragOverlay() {
-		let activeCard = contentList.find((content) => content.id === activeId);
+		let activeCard = contentList.find((content) => content.id === currentDragCard?.id);
 		if (!activeCard) {
-			activeCard = moduleList.find((module) => module.id === activeId);
+			activeCard = moduleList.find((module) => module.id === currentDragCard?.id);
 		}
 		if (!activeCard) {
-			activeCard = timelineContentList.find((timelineContent) => timelineContent.id === activeId);
+			activeCard = timelineContentList.find((timelineContent) => timelineContent.id === currentDragCard?.id);
 		}
 		if (activeCard) {
 			return (
@@ -141,13 +140,13 @@ function App(): JSX.Element {
 			>
 				<Pallette
 					moduleList={moduleList}
-					activeId={activeId}
+					currentDragCard={currentDragCard}
 					className="w-full row-span-2 border-r border-black"
 				/>
-				<ContentArea contentList={contentList} activeId={activeId}></ContentArea>
+				<ContentArea contentList={contentList} currentDragCard={currentDragCard} ></ContentArea>
 				<Timeline
 					timelineContentList={timelineContentList}
-					activeId={activeId}
+					currentDragCard={currentDragCard}
 					className="!self-stretch !w-full border-t border-black"
 				/>
 				<DragOverlay>{handleDragOverlay()}</DragOverlay>
