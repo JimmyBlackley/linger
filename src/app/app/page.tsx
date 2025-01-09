@@ -1,22 +1,14 @@
 "use client";
 import React, { useState } from "react";
-import {
-	Active,
-	DndContext,
-	DragEndEvent,
-	DragOverEvent,
-	DragOverlay,
-	DragStartEvent,
-} from "@dnd-kit/core";
+import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
-import Pallette from "@/app/ui/app/Pallette";
-import Timeline from "@/app/ui/app/Timeline";
-import ContentArea from "@/app/ui/app/ContentArea";
+import { Palette } from "@/app/ui/app/Palette";
+import { Timeline } from "@/app/ui/app/Timeline";
+import { ContentArea } from "@/app/ui/app/ContentArea";
 import { Content, Module } from "../types";
 import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 import { createContent } from "../lib/app/createContent";
-import { addToTimeline } from "../lib/app/addToTimeline";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 
 function App(): JSX.Element {
@@ -38,7 +30,7 @@ function App(): JSX.Element {
 		{ id: uuidv4(), name: "Module 9" },
 		{ id: uuidv4(), name: "Module 10" },
 	]);
-	const [currentDragCard, setCurrentDragCard] = useState< Active | null>(null);
+	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
 	function handleDragStart(e: DragStartEvent) {
 		setCurrentDragCard(e.active);
 	}
@@ -46,15 +38,15 @@ function App(): JSX.Element {
 		const { active, over } = e;
 		setCurrentDragCard(null);
 		if (over) {
-			/* dragging item from pallete */
-			if (active.data.current?.container === "pallete") {
-				if (over.data.current?.container === "pallete" || over.id === "pallete") {
+			/* dragging item from palette */
+			if (active.data.current?.container === "palette") {
+				if (over.data.current?.container === "palette" || over.id === "palette") {
 					setModuleList((moduleList) => {
 						const oldIndex = moduleList.findIndex((module) => module.id === active.id);
 						const newIndex = moduleList.findIndex((module) => module.id === over.id);
 						return arrayMove(moduleList, oldIndex, newIndex);
 					});
-				} else if (over && over.data.current?.container === "contentArea" || over.id === "contentArea") {
+				} else if ((over && over.data.current?.container === "contentArea") || over.id === "contentArea") {
 					createContent(active.data.current?.name);
 				}
 			}
@@ -104,12 +96,8 @@ function App(): JSX.Element {
 				onDragEnd={handleDragEnd}
 				onDragOver={handleDragOver}
 			>
-				<Pallette
-					moduleList={moduleList}
-					currentDragCard={currentDragCard}
-					className="w-full h-full"
-				/>
-				<ContentArea currentDragCard={currentDragCard} ></ContentArea>
+				<Palette moduleList={moduleList} currentDragCard={currentDragCard} className="w-full h-full" />
+				<ContentArea currentDragCard={currentDragCard}></ContentArea>
 				<Timeline
 					timelineContentList={timelineContentList}
 					currentDragCard={currentDragCard}
