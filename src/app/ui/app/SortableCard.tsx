@@ -6,7 +6,7 @@ interface Props {
 	className?: string;
 	children?: React.ReactNode;
 	id: string;
-	container: "contentArea" | "pallete" | "timeline";
+	container: "contentArea" | "palette" | "timeline";
 	name: string;
 }
 

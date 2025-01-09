@@ -11,8 +11,8 @@ interface Props {
 	moduleList: Module[];
 	currentDragCard: Active | null;
 }
-function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Element {
-	const { setNodeRef } = useDroppable({ id: "pallete" });
+export function Palette({ className, moduleList, currentDragCard }: Props): JSX.Element {
+	const { setNodeRef } = useDroppable({ id: "palette" });
 	const [currentActiveButtonId, setCurrentActiveButtonId] = useState("");
 	return (
 		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
@@ -63,7 +63,7 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 							<SortableCard
 								key={module.id}
 								className={`w-full flex-shrink-0 ${currentDragCard?.id === module.id ? "invisible" : ""}`}
-								container="pallete"
+								container="palette"
 								name={module.name}
 								id={module.id}
 							>
@@ -76,4 +76,3 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 		</div>
 	);
 }
-export default Pallette;
