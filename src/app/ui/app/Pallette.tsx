@@ -15,10 +15,12 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 	const { setNodeRef } = useDroppable({ id: "pallete" });
 	const [currentActiveButtonId, setCurrentActiveButtonId] = useState("");
 	return (
-		<div className={`relative p-2 flex flex-col gap-2 ${className}`}>
+		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
 			{currentDragCard?.data.current?.container === "contentArea" && (
 				<div className="absolute inset-0 bg-red-500 opacity-50  pointer-events-none"></div>
 			)}
+			<div className="row-span-2"></div>
+
 			<motion.div className="flex justify-end gap-2">
 				<DropdownButton
 					className="w-8 h-8 text-2xl"
@@ -35,16 +37,17 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 					+
 				</DropdownButton>
 			</motion.div>
+
 			<div
 				ref={setNodeRef}
-				className="flex flex-col items-center gap-4 px-0 py-[15px] h-full w-full bg-gray-300 rounded-[14px] overflow-y-auto shadow-[inset_0px_4px_4px_#00000040]"
+				className="grid grid-cols-3 auto-rows-min gap-3 p-3 h-full w-full bg-white rounded-[14px] overflow-y-auto"
 			>
 				<SortableContext items={moduleList}>
 					{moduleList.map((module) => {
 						return (
 							<SortableCard
 								key={module.id}
-								className={`flex-shrink-0 ${currentDragCard?.id === module.id ? "invisible" : ""}`}
+								className={`w-full flex-shrink-0 ${currentDragCard?.id === module.id ? "invisible" : ""}`}
 								container="pallete"
 								name={module.name}
 								id={module.id}
