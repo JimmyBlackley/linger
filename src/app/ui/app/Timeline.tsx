@@ -11,12 +11,12 @@ interface Props {
 	children?: React.ReactNode;
 }
 
-function Timeline({ className, timelineContentList, currentDragCard, children }: Props): JSX.Element {
+export function Timeline({ className, timelineContentList, currentDragCard, children }: Props): JSX.Element {
 	const { setNodeRef } = useDroppable({ id: "timeline" });
 	return (
 		/* outer box */
 		<div ref={setNodeRef} className={`shadow-[0px_-4px_4px_#00000040] h-200px p-[15px] relative ${className}`}>
-			{currentDragCard?.data.current?.container === "pallete" && (
+			{currentDragCard?.data.current?.container === "palette" && (
 				<div className="absolute inset-0 bg-green-500 opacity-50 pointer-events-none"></div>
 			)}
 			<div className="h-full w-full grow bg-white rounded-[14px] overflow-x-scroll">
@@ -44,4 +44,3 @@ function Timeline({ className, timelineContentList, currentDragCard, children }:
 		</div>
 	);
 }
-export default Timeline;

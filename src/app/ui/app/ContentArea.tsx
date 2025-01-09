@@ -8,12 +8,10 @@ interface Props {
 	currentDragCard: Active | null;
 }
 
-function ContentArea({ children, currentDragCard }: Props): JSX.Element {
+export function ContentArea({ children, currentDragCard }: Props): JSX.Element {
 	const { setNodeRef } = useDroppable({ id: "contentArea" });
 	return (
 		<div ref={setNodeRef} className="relative">
 		</div>
 	);
 }
-
-export default ContentArea;
