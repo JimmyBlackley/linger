@@ -17,9 +17,24 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 	return (
 		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
 			{currentDragCard?.data.current?.container === "timeline" && (
-				<div className="absolute inset-0 bg-red-500 opacity-50  pointer-events-none"></div>
+				<div className="absolute inset-0 bg-red-500 opacity-50 pointer-events-none"></div>
 			)}
-			<div className="row-span-2"></div>
+			<motion.div className="row-span-2 flex flex-col gap-2">
+				<DropdownButton
+					className="w-8 h-8 text-2xl"
+					currentActiveButtonId={currentActiveButtonId}
+					setCurrentActiveButtonId={setCurrentActiveButtonId}
+				>
+					+
+				</DropdownButton>
+				<DropdownButton
+					className="w-8 h-8 text-2xl"
+					currentActiveButtonId={currentActiveButtonId}
+					setCurrentActiveButtonId={setCurrentActiveButtonId}
+				>
+					+
+				</DropdownButton>
+			</motion.div>
 
 			<motion.div className="flex justify-end gap-2">
 				<DropdownButton
