@@ -1,50 +1,146 @@
-import React from "react";
-import { NavPill } from "@/ui/app/NavPill";
-import { Pallette } from "@/ui/app/Pallette";
-import { Timeline } from "@/ui/app/Timeline";
+"use client";
+import React, { useState } from "react";
+import {
+	Active,
+	DndContext,
+	DragEndEvent,
+	DragOverEvent,
+	DragOverlay,
+	DragStartEvent,
+} from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
+import { v4 as uuidv4 } from "uuid";
+import NavPill from "@/app/ui/app/NavPill";
+import Pallette from "@/app/ui/app/Pallette";
+import Timeline from "@/app/ui/app/Timeline";
+import ContentArea from "@/app/ui/app/ContentArea";
+import { Content, Module } from "../types";
+import { DragOverlayCard } from "../ui/app/DragOverlayCard";
+import { createContent } from "../lib/app/createContent";
+import { addToTimeline } from "../lib/app/addToTimeline";
+import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 
-const App = (): JSX.Element => {
-  return (
-    <div className="flex flex-col min-h-screen items-start justify-center relative bg-variable-collection-bg-grey">
-      <div className="flex h-[66px] items-start gap-2.5 p-2.5 relative self-stretch w-full">
-        <div className="gap-2.5 pl-0 pr-[59px] py-0 self-stretch inline-flex items-center relative flex-[0_0_auto]">
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Products"
-            state="active"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Solutions"
-            state="default"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Community"
-            state="default"
-          />
-          <NavPill
-            className="!flex-[0_0_auto]"
-            label="Resources"
-            state="default"
-          />
-        </div>
-
-        <div className="relative flex-1 self-stretch grow" />
-
-        <div className="relative self-stretch w-[264px] bg-white rounded-[27px]" />
-      </div>
-
-      <div className="flex items-start relative flex-1 self-stretch w-full grow">
-        <Pallette className="!self-stretch !h-[unset]" />
-        <div className="flex flex-col items-start relative flex-1 self-stretch grow">
-          <div className="relative flex-1 self-stretch w-full grow border border-solid border-black" />
-
-          <Timeline className="!self-stretch !w-full" />
-        </div>
-      </div>
-    </div>
-  );
-};
+function App(): JSX.Element {
+	const [contentList, setContentList] = useState<Content[]>([
+		{ id: uuidv4(), name: "This is a module filled with content" },
+		{ id: uuidv4(), name: "Test content" },
+		{ id: uuidv4(), name: "Another test content" },
+		{ id: uuidv4(), name: "Yet another test content" },
+	]);
+	const [timelineContentList, setTimelineContentList] = useState<Content[]>([
+		{ id: uuidv4(), name: "Timeline Content 1" },
+		{ id: uuidv4(), name: "Timeline Content 2" },
+		{ id: uuidv4(), name: "Timeline Content 3" },
+		{ id: uuidv4(), name: "Timeline Content 4" },
+	]);
+	const [moduleList, setModuleList] = useState<Module[]>([
+		{ id: uuidv4(), name: "Module 1" },
+		{ id: uuidv4(), name: "Module 2" },
+		{ id: uuidv4(), name: "Module 3" },
+		{ id: uuidv4(), name: "Module 4" },
+		{ id: uuidv4(), name: "Module 5" },
+		{ id: uuidv4(), name: "Module 6" },
+		{ id: uuidv4(), name: "Module 7" },
+		{ id: uuidv4(), name: "Module 8" },
+		{ id: uuidv4(), name: "Module 9" },
+		{ id: uuidv4(), name: "Module 10" },
+	]);
+	const [currentDragCard, setCurrentDragCard] = useState< Active | null>(null);
+	function handleDragStart(e: DragStartEvent) {
+		setCurrentDragCard(e.active);
+	}
+	function handleDragEnd(e: DragEndEvent) {
+		const { active, over } = e;
+		setCurrentDragCard(null);
+		if (over) {
+			/* dragging item from content */
+			if (active.data.current?.container === "contentArea") {
+				if (over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					setContentList((contentList) => {
+						const oldIndex = contentList.findIndex((content) => content.id === active.id);
+						const newIndex = contentList.findIndex((content) => content.id === over.id);
+						return arrayMove(contentList, oldIndex, newIndex);
+					});
+				} else if (over.data.current?.container === "timeline" || over.id === "timeline") {
+					addToTimeline(active.data.current?.name);
+				}
+			}
+			/* dragging item from pallete */
+			if (active.data.current?.container === "pallete") {
+				if (over.data.current?.container === "pallete" || over.id === "pallete") {
+					setModuleList((moduleList) => {
+						const oldIndex = moduleList.findIndex((module) => module.id === active.id);
+						const newIndex = moduleList.findIndex((module) => module.id === over.id);
+						return arrayMove(moduleList, oldIndex, newIndex);
+					});
+				} else if (over && over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					createContent(active.data.current?.name);
+				}
+			}
+			/* dragging item from timeline */
+			if (active.data.current?.container === "timeline") {
+				if (over.data.current?.container === "timeline" || over.id === "timeline") {
+					setTimelineContentList((timelineContentList) => {
+						const oldIndex = timelineContentList.findIndex(
+							(timelineContent) => timelineContent.id === active.id
+						);
+						const newIndex = timelineContentList.findIndex(
+							(timelineContent) => timelineContent.id === over.id
+						);
+						return arrayMove(timelineContentList, oldIndex, newIndex);
+					});
+				} else if (over.data.current?.container === "contentArea" || over.id === "contentArea") {
+					deleteFromTimeline(active.data.current?.name);
+				}
+			}
+		}
+	}
+	function handleDragOver(event: DragOverEvent) {
+		const { over } = event;
+		if (over) {
+			console.log(over.data.current?.container);
+			console.log(over.id);
+		}
+	}
+	function handleDragOverlay() {
+		let activeCard = contentList.find((content) => content.id === currentDragCard?.id);
+		if (!activeCard) {
+			activeCard = moduleList.find((module) => module.id === currentDragCard?.id);
+		}
+		if (!activeCard) {
+			activeCard = timelineContentList.find((timelineContent) => timelineContent.id === currentDragCard?.id);
+		}
+		if (activeCard) {
+			return (
+				<DragOverlayCard key={activeCard.id} className={`w-full`}>
+					{activeCard.name}
+				</DragOverlayCard>
+			);
+		}
+	}
+	return (
+		<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey border">
+			<DndContext
+				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
+				onDragStart={handleDragStart}
+				onDragEnd={handleDragEnd}
+				onDragOver={handleDragOver}
+			>
+				<Pallette
+					moduleList={moduleList}
+					currentDragCard={currentDragCard}
+					className="w-full h-full"
+				/>
+				<ContentArea contentList={contentList} currentDragCard={currentDragCard} ></ContentArea>
+				<Timeline
+					timelineContentList={timelineContentList}
+					currentDragCard={currentDragCard}
+					className="col-span-2 !self-stretch !w-full"
+				/>
+				<DragOverlay>{handleDragOverlay()}</DragOverlay>
+			</DndContext>
+		</div>
+	);
+}
 
 export default App;
