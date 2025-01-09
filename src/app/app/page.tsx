@@ -10,7 +10,6 @@ import {
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { v4 as uuidv4 } from "uuid";
-import NavPill from "@/app/ui/app/NavPill";
 import Pallette from "@/app/ui/app/Pallette";
 import Timeline from "@/app/ui/app/Timeline";
 import ContentArea from "@/app/ui/app/ContentArea";
@@ -21,12 +20,6 @@ import { addToTimeline } from "../lib/app/addToTimeline";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 
 function App(): JSX.Element {
-	const [contentList, setContentList] = useState<Content[]>([
-		{ id: uuidv4(), name: "This is a module filled with content" },
-		{ id: uuidv4(), name: "Test content" },
-		{ id: uuidv4(), name: "Another test content" },
-		{ id: uuidv4(), name: "Yet another test content" },
-	]);
 	const [timelineContentList, setTimelineContentList] = useState<Content[]>([
 		{ id: uuidv4(), name: "Timeline Content 1" },
 		{ id: uuidv4(), name: "Timeline Content 2" },
@@ -53,18 +46,6 @@ function App(): JSX.Element {
 		const { active, over } = e;
 		setCurrentDragCard(null);
 		if (over) {
-			/* dragging item from content */
-			if (active.data.current?.container === "contentArea") {
-				if (over.data.current?.container === "contentArea" || over.id === "contentArea") {
-					setContentList((contentList) => {
-						const oldIndex = contentList.findIndex((content) => content.id === active.id);
-						const newIndex = contentList.findIndex((content) => content.id === over.id);
-						return arrayMove(contentList, oldIndex, newIndex);
-					});
-				} else if (over.data.current?.container === "timeline" || over.id === "timeline") {
-					addToTimeline(active.data.current?.name);
-				}
-			}
 			/* dragging item from pallete */
 			if (active.data.current?.container === "pallete") {
 				if (over.data.current?.container === "pallete" || over.id === "pallete") {
@@ -103,10 +84,7 @@ function App(): JSX.Element {
 		}
 	}
 	function handleDragOverlay() {
-		let activeCard = contentList.find((content) => content.id === currentDragCard?.id);
-		if (!activeCard) {
-			activeCard = moduleList.find((module) => module.id === currentDragCard?.id);
-		}
+		let activeCard = moduleList.find((content) => content.id === currentDragCard?.id);
 		if (!activeCard) {
 			activeCard = timelineContentList.find((timelineContent) => timelineContent.id === currentDragCard?.id);
 		}
@@ -119,7 +97,7 @@ function App(): JSX.Element {
 		}
 	}
 	return (
-		<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey border">
+		<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
 			<DndContext
 				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
 				onDragStart={handleDragStart}
@@ -131,7 +109,7 @@ function App(): JSX.Element {
 					currentDragCard={currentDragCard}
 					className="w-full h-full"
 				/>
-				<ContentArea contentList={contentList} currentDragCard={currentDragCard} ></ContentArea>
+				<ContentArea currentDragCard={currentDragCard} ></ContentArea>
 				<Timeline
 					timelineContentList={timelineContentList}
 					currentDragCard={currentDragCard}
