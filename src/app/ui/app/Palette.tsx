@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { motion } from "motion/react";
 import { SortableCard } from "./SortableCard";
-import { DropdownButton } from "./DropdownButton";
 import { Module } from "@/app/types";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Active, useDroppable } from "@dnd-kit/core";
+import { MenuItem } from "./MenuItem";
 
 interface Props {
 	className?: string;
@@ -13,44 +13,23 @@ interface Props {
 }
 export function Palette({ className, moduleList, currentDragCard }: Props): JSX.Element {
 	const { setNodeRef } = useDroppable({ id: "palette" });
-	const [currentActiveButtonId, setCurrentActiveButtonId] = useState("");
 	return (
 		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
 			{currentDragCard?.data.current?.container === "timeline" && (
 				<div className="absolute inset-0 bg-red-500 opacity-50 pointer-events-none"></div>
 			)}
 			<motion.div className="row-span-2 flex flex-col gap-2">
-				<DropdownButton
-					className="w-8 h-8 text-2xl"
-					currentActiveButtonId={currentActiveButtonId}
-					setCurrentActiveButtonId={setCurrentActiveButtonId}
-				>
-					+
-				</DropdownButton>
-				<DropdownButton
-					className="w-8 h-8 text-2xl"
-					currentActiveButtonId={currentActiveButtonId}
-					setCurrentActiveButtonId={setCurrentActiveButtonId}
-				>
-					+
-				</DropdownButton>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
 			</motion.div>
 
 			<motion.div className="flex justify-end gap-2">
-				<DropdownButton
-					className="w-8 h-8 text-2xl"
-					currentActiveButtonId={currentActiveButtonId}
-					setCurrentActiveButtonId={setCurrentActiveButtonId}
-				>
-					+
-				</DropdownButton>
-				<DropdownButton
-					className="w-8 h-8 text-2xl"
-					currentActiveButtonId={currentActiveButtonId}
-					setCurrentActiveButtonId={setCurrentActiveButtonId}
-				>
-					+
-				</DropdownButton>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl">+</MenuItem>
 			</motion.div>
 
 			<div
@@ -62,7 +41,9 @@ export function Palette({ className, moduleList, currentDragCard }: Props): JSX.
 						return (
 							<SortableCard
 								key={module.id}
-								className={`w-full flex-shrink-0 ${currentDragCard?.id === module.id ? "invisible" : ""}`}
+								className={`w-full flex-shrink-0 ${
+									currentDragCard?.id === module.id ? "invisible" : ""
+								}`}
 								container="palette"
 								name={module.name}
 								id={module.id}
