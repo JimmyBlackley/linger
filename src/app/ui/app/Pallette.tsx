@@ -16,7 +16,7 @@ function Pallette({ className, moduleList, currentDragCard }: Props): JSX.Elemen
 	const [currentActiveButtonId, setCurrentActiveButtonId] = useState("");
 	return (
 		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
-			{currentDragCard?.data.current?.container === "contentArea" && (
+			{currentDragCard?.data.current?.container === "timeline" && (
 				<div className="absolute inset-0 bg-red-500 opacity-50  pointer-events-none"></div>
 			)}
 			<div className="row-span-2"></div>
