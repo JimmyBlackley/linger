@@ -1,0 +1,77 @@
+// Define the database connection
+datasource db {
+  provider = "postgresql" // Change to your database provider (e.g., mysql, sqlite, mongodb)
+  url      = env("DATABASE_URL")
+}
+
+// Generate the Prisma client for interacting with the database
+generator client {
+  provider = "prisma-client-js"
+}
+
+// User model
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  email     String   @unique
+  password  String
+  quizzes   Quiz[] // Relation to quizzes created by the user
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Quiz model
+model Quiz {
+  id          Int           @id @default(autoincrement())
+  title       String
+  description String?
+  creatorId   Int // Foreign key to User
+  creator     User          @relation(fields: [creatorId], references: [id])
+  questions   Question[] // Relation to questions
+  sessions    GameSession[] // Reciprocal field for GameSession
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+// Question model
+model Question {
+  id        Int      @id @default(autoincrement())
+  text      String
+  quizId    Int // Foreign key to Quiz
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  answers   Answer[] // Relation to possible answers
+  correctId Int?     @unique // Foreign key to the correct Answer (one-to-one relationship)
+  correct   Answer?  @relation("CorrectAnswer", fields: [correctId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+// Answer model
+model Answer {
+  id         Int       @id @default(autoincrement())
+  text       String
+  questionId Int // Foreign key to Question
+  question   Question  @relation(fields: [questionId], references: [id])
+  correctFor Question? @relation("CorrectAnswer") // Reciprocal field for correct
+  createdAt  DateTime  @default(now())
+}
+
+// GameSession model
+model GameSession {
+  id        Int      @id @default(autoincrement())
+  quizId    Int // Foreign key to Quiz
+  quiz      Quiz     @relation(fields: [quizId], references: [id])
+  players   Player[] // Relation to players in the game
+  status    String   @default("waiting") // e.g., "waiting", "in_progress", "finished"
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Player model
+model Player {
+  id        Int         @id @default(autoincrement())
+  name      String
+  sessionId Int // Foreign key to GameSession
+  session   GameSession @relation(fields: [sessionId], references: [id])
+  score     Int         @default(0)
+  createdAt DateTime    @default(now())
+}
