@@ -26,9 +26,9 @@ export function SortableCard({ className, children, id, container, name }: Props
 			style={style}
 			{...attributes}
 			{...listeners}
-			className={`flex w-[90%] h-[100px] items-center p-4 bg-[#d3cd85] rounded-[20px] gap-1 select-none ${className}`}
+			className={`flex w-[90%] h-[100px] items-center p-4 bg-[#FFF3B0] rounded-[20px] gap-1 select-none ${className}`}
 		>
-			<div className="w-20 h-20 bg-[#989898]" />
+			<div className="w-20 h-20 bg-[#E6DAFF]" />
 			<p className="text-black text-lg flex-1 text-center">{children}</p>
 		</div>
 	);
