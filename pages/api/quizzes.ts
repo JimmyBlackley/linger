@@ -3,10 +3,13 @@ import { prisma } from '../../src/app/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { title } = req.body;
+    const { id, title, creatorId }: { id: string; title: string, creatorId: number } = req.body;
     try {
       const newQuiz = await prisma.quiz.create({
-        data: { title },
+        data: {
+          title,
+          creatorId,
+        },
       });
       res.status(201).json(newQuiz);
     } catch (error) {

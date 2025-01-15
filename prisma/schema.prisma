@@ -1,36 +1,32 @@
-// Define the database connection
 datasource db {
-  provider = "postgresql" // Change to your database provider (e.g., mysql, sqlite, mongodb)
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-// Generate the Prisma client for interacting with the database
 generator client {
   provider = "prisma-client-js"
 }
 
-// User model
 model User {
   id        Int      @id @default(autoincrement())
   username  String   @unique
   email     String   @unique
   password  String
-  quizzes   Quiz[] // Relation to quizzes created by the user
+  quizzes   Quiz[]   // Relation to quizzes created by the user
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-// Quiz model
 model Quiz {
   id          Int           @id @default(autoincrement())
   title       String
   description String?
-  creatorId   Int // Foreign key to User
-  creator     User          @relation(fields: [creatorId], references: [id])
-  questions   Question[] // Relation to questions
-  sessions    GameSession[] // Reciprocal field for GameSession
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  creatorId   Int            // Foreign key to User
+  creator     User           @relation(fields: [creatorId], references: [id])
+  questions   Question[]     // Relation to questions
+  sessions    GameSession[]  // Reciprocal field for GameSession
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
 }
 
 enum QuestionType {
@@ -40,7 +36,6 @@ enum QuestionType {
   DRAG_AND_DROP
 }
 
-// Question model
 model Question {
   id        Int          @id @default(autoincrement())
   text      String
@@ -53,7 +48,6 @@ model Question {
   createdAt DateTime     @default(now())
 }
 
-// Answer model
 model Answer {
   id         Int       @id @default(autoincrement())
   text       String?
@@ -64,7 +58,6 @@ model Answer {
   createdAt  DateTime  @default(now())
 }
 
-// GameSession model
 model GameSession {
   id        Int      @id @default(autoincrement())
   quizId    Int      // Foreign key to Quiz
@@ -75,7 +68,6 @@ model GameSession {
   updatedAt DateTime @updatedAt
 }
 
-// Player model
 model Player {
   id        Int         @id @default(autoincrement())
   name      String
