@@ -33,23 +33,32 @@ model Quiz {
   updatedAt   DateTime      @updatedAt
 }
 
+enum QuestionType {
+  MULTIPLE_CHOICE
+  TEXT_INPUT
+  SLIDER
+  DRAG_AND_DROP
+}
+
 // Question model
 model Question {
-  id        Int      @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   text      String
-  quizId    Int // Foreign key to Quiz
-  quiz      Quiz     @relation(fields: [quizId], references: [id])
-  answers   Answer[] // Relation to possible answers
-  correctId Int?     @unique // Foreign key to the correct Answer (one-to-one relationship)
-  correct   Answer?  @relation("CorrectAnswer", fields: [correctId], references: [id])
-  createdAt DateTime @default(now())
+  type      QuestionType
+  quizId    Int          // Foreign key to Quiz
+  quiz      Quiz         @relation(fields: [quizId], references: [id])
+  answers   Answer[]     // Relation to possible answers (for multiple choice)
+  correctId Int?         @unique // Foreign key to the correct Answer (one-to-one relationship)
+  correct   Answer?      @relation("CorrectAnswer", fields: [correctId], references: [id])
+  createdAt DateTime     @default(now())
 }
 
 // Answer model
 model Answer {
   id         Int       @id @default(autoincrement())
-  text       String
-  questionId Int // Foreign key to Question
+  text       String?
+  value      Float?    // For slider values
+  questionId Int       // Foreign key to Question
   question   Question  @relation(fields: [questionId], references: [id])
   correctFor Question? @relation("CorrectAnswer") // Reciprocal field for correct
   createdAt  DateTime  @default(now())
@@ -58,7 +67,7 @@ model Answer {
 // GameSession model
 model GameSession {
   id        Int      @id @default(autoincrement())
-  quizId    Int // Foreign key to Quiz
+  quizId    Int      // Foreign key to Quiz
   quiz      Quiz     @relation(fields: [quizId], references: [id])
   players   Player[] // Relation to players in the game
   status    String   @default("waiting") // e.g., "waiting", "in_progress", "finished"
@@ -70,7 +79,7 @@ model GameSession {
 model Player {
   id        Int         @id @default(autoincrement())
   name      String
-  sessionId Int // Foreign key to GameSession
+  sessionId Int         // Foreign key to GameSession
   session   GameSession @relation(fields: [sessionId], references: [id])
   score     Int         @default(0)
   createdAt DateTime    @default(now())
