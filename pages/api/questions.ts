@@ -3,8 +3,7 @@ import { prisma } from "../../src/app/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { text }: { text: string } = req.body;
-    const quizId = 6; // Hardcoded quiz ID
+    const { text, quizId }: { text: string, quizId: number } = req.body;// Hardcoded quiz ID
     const type = "MULTIPLE_CHOICE"; // Hardcoded question type
 
     try {
@@ -24,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const questions = await prisma.question.findMany({
         where: {
-          quizId: 1, // Hardcoded quiz ID for fetching questions
+          quizId: 6, // Hardcoded quiz ID for fetching questions
         },
       });
       res.status(200).json(questions);

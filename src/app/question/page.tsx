@@ -13,6 +13,7 @@ const App = () => {
 
   const [questions, setQuestions] = useState<Question[]>([]);
   const [text, setText] = useState("");
+  const [quizId, setQuizId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -41,14 +42,15 @@ const App = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({ text, quizId }),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
       }
       const newQuestion = await response.json();
       setQuestions([...questions, newQuestion]);
-      setText("");
+      setText("")
+      setQuizId(null);
     } catch (error) {
       console.error("Failed to create question:", error);
       setError("Failed to create question. Please try again later.");
@@ -65,6 +67,14 @@ const App = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Enter new question text"
+          required
+          className="border text-black placeholder-slate-400"
+        />
+        <input 
+          type="text"
+          value = { Number(quizId) }
+          onChange={(e) => setQuizId(Number(e.target.value))}
+          placeholder="Enter Question ID"
           required
           className="border text-black placeholder-slate-400"
         />

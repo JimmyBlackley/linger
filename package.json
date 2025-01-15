@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "prisma:seed": "ts-node prisma/seed.ts",
-    "build:dev": "next build --debug --no-lint --no-mangling --profile"
+    "build:dev": "next build --debug --no-lint --no-mangling --profile",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
