@@ -3,65 +3,85 @@
 import { useEffect, useState } from "react";
 
 const App = () => {
-	interface Quiz {
-		id: number;
-		title: string;
-		description?: string;
-		creatorId: number;
-		createdAt: string;
-	}
+  interface Question {
+    id: number;
+    text: string;
+    type: string;
+    quizId: number;
+    createdAt: string;
+  }
 
-	const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-	const [title, setTitle] = useState("");
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [text, setText] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-	useEffect(() => {
-		const fetchQuizzes = async () => {
-			const response = await fetch("/api/quizzes");
-			const data = await response.json();
-			setQuizzes(data);
-		};
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch("/api/questions");
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
+        }
+        const data = await response.json();
+        setQuestions(data);
+      } catch (error) {
+        console.error("Failed to fetch questions:", error);
+        setError("Failed to fetch questions. Please try again later.");
+      }
+    };
 
-		fetchQuizzes();
-	}, []);
+    fetchQuestions();
+  }, []);
 
-	const handleSubmit = async (e: React.FormEvent) => {
-		e.preventDefault();
-		const creatorId = 1; // Hardcoded user ID
-		const response = await fetch("/api/quizzes", {
-			method: "POST",
-			headers: {
-				"Content-Type": "application/json",
-			},
-			body: JSON.stringify({ title, creatorId }),
-		});
-		const newQuiz = await response.json();
-		setQuizzes([...quizzes, newQuiz]);
-		setTitle("");
-	};
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/questions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text }),
+      });
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+      const newQuestion = await response.json();
+      setQuestions([...questions, newQuestion]);
+      setText("");
+    } catch (error) {
+      console.error("Failed to create question:", error);
+      setError("Failed to create question. Please try again later.");
+    }
+  };
 
-	return (
-		<div className="m-4">
-			<h1 className="text-[99px] text-black">Quizzes</h1>
-			<form onSubmit={handleSubmit}>
-				<input
-					type="text"
-					value={title}
-					onChange={(e) => setTitle(e.target.value)}
-					placeholder="Enter new quiz type"
-					required
-					className="border text-black placeholder-slate-400"
-				/>
-				<button className="bg-white p-8 m-3 text-black border-black border" type="submit">
-					Create Quiz
-				</button>
-			</form>
-			<ul className="text-gray-950">
-				{quizzes.map((quiz) => {
-					return <li key={quiz.id}>{quiz.title}</li>;
-				})}
-			</ul>
-		</div>
-	);
+  return (
+    <div className="m-4">
+      <h1 className="text-[99px] text-black">Questions</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Enter new question text"
+          required
+          className="border text-black placeholder-slate-400"
+        />
+        <button
+          className="bg-white p-8 m-3 text-black border-black border"
+          type="submit"
+        >
+          Create Question
+        </button>
+      </form>
+      <ul className="text-gray-950">
+        {questions.map((question) => (
+          <li key={question.id}>{question.text}</li>
+        ))}
+      </ul>
+    </div>
+  );
 };
 
 export default App;
