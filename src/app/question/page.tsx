@@ -36,6 +36,10 @@ const App = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (quizId === null) {
+      setError("Please enter a quiz ID.");
+      return;
+    }
     try {
       const response = await fetch("/api/questions", {
         method: "POST",
@@ -49,7 +53,7 @@ const App = () => {
       }
       const newQuestion = await response.json();
       setQuestions([...questions, newQuestion]);
-      setText("")
+      setText("");
       setQuizId(null);
     } catch (error) {
       console.error("Failed to create question:", error);
@@ -70,11 +74,11 @@ const App = () => {
           required
           className="border text-black placeholder-slate-400"
         />
-        <input 
-          type="text"
-          value = { Number(quizId) }
+        <input
+          type="number"
+          value={quizId ?? ""}
           onChange={(e) => setQuizId(Number(e.target.value))}
-          placeholder="Enter Question ID"
+          placeholder="Enter Quiz ID"
           required
           className="border text-black placeholder-slate-400"
         />
