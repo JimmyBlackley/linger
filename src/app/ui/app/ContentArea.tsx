@@ -1,7 +1,4 @@
-import { SortableCard } from "./SortableCard";
 import { Active, useDroppable } from "@dnd-kit/core";
-import { SortableContext } from "@dnd-kit/sortable";
-import { Content } from "@/app/types";
 
 interface Props {
 	children?: React.ReactNode;

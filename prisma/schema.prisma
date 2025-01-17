@@ -25,6 +25,7 @@ model Quiz {
   creator     User           @relation(fields: [creatorId], references: [id])
   questions   Question[]     // Relation to questions
   sessions    GameSession[]  // Reciprocal field for GameSession
+  timeline    Int[]          // Static array of question IDs for timeline
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 }
