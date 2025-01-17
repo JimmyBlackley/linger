@@ -28,7 +28,7 @@ const App = () => {
   useEffect(() => {
     const fetchQuestions = async () => {
       try {
-        const response = await fetch("/api/questions");
+        const response = await fetch("/api/questions", { cache: 'force-cache' });
         if (!response.ok) {
           throw new Error(`Error: ${response.statusText}`);
         }
@@ -47,7 +47,7 @@ const App = () => {
     if (questionId !== null) {
       const fetchAnswers = async () => {
         try {
-          const response = await fetch(`/api/answers?questionId=${questionId}`);
+          const response = await fetch(`/api/answers?questionId=${questionId}`, { cache: 'force-cache' });
           if (!response.ok) {
             throw new Error(`Error: ${response.statusText}`);
           }
