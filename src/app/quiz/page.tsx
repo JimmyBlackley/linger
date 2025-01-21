@@ -1,11 +1,13 @@
-"use client";
 
-import { useEffect, useState } from "react";
+'use client';
+
+import { useEffect, useState } from 'react';
 
 const App = () => {
   interface Quiz {
     id: number;
     title: string;
+
     description?: string;
     creatorId: number;
     createdAt: string;
@@ -66,5 +68,6 @@ const App = () => {
     </div>
   );
 };
+
 
 export default App;
