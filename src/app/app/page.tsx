@@ -1,8 +1,7 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
-import { v4 as uuidv4 } from "uuid";
 import { Palette } from "@/app/ui/app/Palette";
 import { Timeline } from "@/app/ui/app/Timeline";
 import { ContentArea } from "@/app/ui/app/ContentArea";
@@ -16,12 +15,12 @@ function App(): JSX.Element {
 	const [questions, setQuestions] = useState<Question[]>([]);
 	const [error, setError] = useState<string | null>(null);
 	const searchParams = useSearchParams();
-	const quizSearch = searchParams?.get("quiz");
+	const quizSelect = searchParams?.get("quiz");
 
 	useEffect(() => {
 		async function fetchQuestions() {
 			try {
-				const response = await fetch(`/api/questions?quizId=${quizSearch || "9"}`);
+				const response = await fetch(`/api/questions?quizId=${quizSelect || "9"}`);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
@@ -32,16 +31,38 @@ function App(): JSX.Element {
 				setError("Failed to fetch questions. Please try again later.");
 			}
 		}
-
 		fetchQuestions();
-	}, [quizSearch]);
+	}, [quizSelect]);
 
-	const [timelineContentList, setTimelineContentList] = useState<Question[]>([
-		{ id: uuidv4(), text: "Timeline Content 1" },
-		{ id: uuidv4(), text: "Timeline Content 2" },
-		{ id: uuidv4(), text: "Timeline Content 3" },
-		{ id: uuidv4(), text: "Timeline Content 4" },
-	]);
+	useEffect(() => {
+		async function fetchTimelineContent() {
+			if (questions.length === 0) {
+				return;
+			}
+			try {
+				const response = await fetch(`/api/quizzes?quizId=${quizSelect}`);
+				if (!response.ok) {
+					throw new Error(`Error ${response.statusText}`);
+				}
+				const data = await response.json();
+				const dataIdList = data.timeline;
+				let newTimelineContentList: Question[] = [];
+				if (dataIdList) {
+					newTimelineContentList = dataIdList.map((id: string) => {
+						return questions.find((question) => question.id === id);
+					});
+				}
+				setTimelineContentList(newTimelineContentList);
+			} catch (error) {
+				console.error("Failed to fetch timeline content:", error);
+				setError("Failed to fetch timeline content. Please try again later.");
+			}
+		}
+
+		fetchTimelineContent();
+	}, [quizSelect, questions]);
+
+	const [timelineContentList, setTimelineContentList] = useState<Question[]>([]);
 
 	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
 
@@ -95,23 +116,25 @@ function App(): JSX.Element {
 	}
 
 	return (
-		<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
-			<DndContext
-				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
-				onDragStart={handleDragStart}
-				onDragEnd={handleDragEnd}
-				onDragOver={handleDragOver}
-			>
-				<Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
-				<ContentArea currentDragCard={currentDragCard}></ContentArea>
-				<Timeline
-					timelineContentList={timelineContentList}
-					currentDragCard={currentDragCard}
-					className="col-span-2 !self-stretch !w-full"
-				/>
-				<DragOverlay>{handleDragOverlay()}</DragOverlay>
-			</DndContext>
-		</div>
+		<Suspense fallback={<div>Loading...</div>}>
+			<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
+				<DndContext
+					id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
+					onDragStart={handleDragStart}
+					onDragEnd={handleDragEnd}
+					onDragOver={handleDragOver}
+				>
+					<Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
+					<ContentArea currentDragCard={currentDragCard}></ContentArea>
+					<Timeline
+						timelineContentList={timelineContentList}
+						currentDragCard={currentDragCard}
+						className="col-span-2 !self-stretch !w-full"
+					/>
+					<DragOverlay>{handleDragOverlay()}</DragOverlay>
+				</DndContext>
+			</div>
+		</Suspense>
 	);
 }
 
