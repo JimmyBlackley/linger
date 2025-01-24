@@ -13,9 +13,11 @@ import { addToTimeline } from "../lib/app/addToTimeline";
 
 function App(): JSX.Element {
 	const [questions, setQuestions] = useState<Question[]>([]);
-	const [error, setError] = useState<string | null>(null);
+	const [timelineContentList, setTimelineContentList] = useState<Question[]>([]);
+	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
 	const searchParams = useSearchParams();
 	const quizSelect = searchParams?.get("quiz");
+
 
 	useEffect(() => {
 		async function fetchQuestions() {
@@ -28,7 +30,6 @@ function App(): JSX.Element {
 				setQuestions(data);
 			} catch (error) {
 				console.error("Failed to fetch questions:", error);
-				setError("Failed to fetch questions. Please try again later.");
 			}
 		}
 		fetchQuestions();
@@ -40,7 +41,7 @@ function App(): JSX.Element {
 				return;
 			}
 			try {
-				const response = await fetch(`/api/quizzes?quizId=${quizSelect|| "308bd4f9-0962-4541-9254-eade2dccc210"}`);
+				const response = await fetch(`/api/quizzes?quizId=${quizSelect || "308bd4f9-0962-4541-9254-eade2dccc210"}`);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
@@ -55,16 +56,11 @@ function App(): JSX.Element {
 				setTimelineContentList(newTimelineContentList);
 			} catch (error) {
 				console.error("Failed to fetch timeline content:", error);
-				setError("Failed to fetch timeline content. Please try again later.");
 			}
 		}
 
 		fetchTimelineContent();
 	}, [quizSelect, questions]);
-
-	const [timelineContentList, setTimelineContentList] = useState<Question[]>([]);
-
-	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
 
 	function handleDragStart(e: DragStartEvent) {
 		setCurrentDragCard(e.active);
