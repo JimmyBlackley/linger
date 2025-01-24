@@ -7,13 +7,13 @@ interface Props {
 	children?: React.ReactNode;
 	id: string;
 	container: "contentArea" | "palette" | "timeline";
-	name: string;
+	text: string;
 }
 
-export function SortableCard({ className, children, id, container, name }: Props): JSX.Element {
+export function SortableCard({ className, children, id, container, text }: Props): JSX.Element {
 	const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
 		id: id,
-		data: { container: container, name: name },
+		data: { container: container, text: text },
 	});
 	const style = {
 		transform: CSS.Transform.toString(transform),

@@ -1,17 +1,17 @@
 import React from "react";
 import { SortableCard } from "./SortableCard";
-import { Module } from "@/app/types";
+import { Question } from "@/app/types";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Active, useDroppable } from "@dnd-kit/core";
 import { MenuItem } from "./MenuItem";
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 
 interface Props {
 	className?: string;
-	moduleList: Module[];
+	questions: Question[];
 	currentDragCard: Active | null;
 }
-export function Palette({ className, moduleList, currentDragCard }: Props): JSX.Element {
+export function Palette({ className, questions, currentDragCard }: Props): JSX.Element {
 	const { setNodeRef } = useDroppable({ id: "palette" });
 	const [isSidebarExpanded, setIsSidebarExpanded] = React.useState(false);
 
@@ -57,19 +57,19 @@ export function Palette({ className, moduleList, currentDragCard }: Props): JSX.
 				ref={setNodeRef}
 				className="grid grid-cols-3 auto-rows-min w-full h-full gap-3 p-3 bg-white rounded-[14px] overflow-y-auto"
 			>
-				<SortableContext items={moduleList}>
-					{moduleList.map((module) => {
+				<SortableContext items={questions}>
+					{questions.map((question) => {
 						return (
 							<SortableCard
-								key={module.id}
+								key={question.id}
 								className={`w-full flex-shrink-0 ${
-									currentDragCard?.id === module.id ? "invisible" : ""
+									currentDragCard?.id === question.id ? "invisible" : ""
 								}`}
 								container="palette"
-								name={module.name}
-								id={module.id}
+								text={question.text}
+								id={question.id}
 							>
-								{module.name}
+								{question.text}
 							</SortableCard>
 						);
 					})}

@@ -1,12 +1,12 @@
 import { SortableContext } from "@dnd-kit/sortable";
 import React from "react";
 import { SortableCard } from "./SortableCard";
-import { TimelineContent } from "@/app/types";
+import { Question } from "@/app/types";
 import { Active, useDroppable } from "@dnd-kit/core";
 
 interface Props {
 	className?: string;
-	timelineContentList: TimelineContent[];
+	timelineContentList: Question[];
 	currentDragCard: Active | null;
 	children?: React.ReactNode;
 }
@@ -28,12 +28,12 @@ export function Timeline({ className, timelineContentList, currentDragCard, chil
 									key={timelineContent.id}
 									id={timelineContent.id}
 									container="timeline"
-									name={timelineContent.name}
+									text={timelineContent.text}
 									className={`w-full ${
 										currentDragCard?.id === timelineContent.id ? "invisible" : ""
 									}`}
 								>
-									{timelineContent.name}
+									{timelineContent.text}
 								</SortableCard>
 							);
 						})}
