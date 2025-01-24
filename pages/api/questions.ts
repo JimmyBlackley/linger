@@ -3,7 +3,7 @@ import { prisma } from "../../src/app/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { text, quizId }: { text: string; quizId: number } = req.body;
+    const { text, quizId }: { text: string; quizId: string } = req.body;
     const type = "MULTIPLE_CHOICE"; // Hardcoded question type
 
     try {
@@ -20,11 +20,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: "Error creating question" });
     }
   } else if (req.method === "GET") {
-    const { quizId }: { quizId?: number } = req.query;
+    const { quizId }: { quizId?: string } = req.query;
 
     try {
       const questions = await prisma.question.findMany({
-        where: quizId ? { quizId: Number(quizId) } : {},
+        where: quizId ? { quizId: quizId } : {},
       });
       res.status(200).json(questions);
     } catch (error) {
