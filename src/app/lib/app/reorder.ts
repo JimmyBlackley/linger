@@ -2,7 +2,7 @@ import { Active, Over } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { Question } from "@/app/types";
 
-export default function reorderQuestions(
+export function reorder(
 	setQuestions: React.Dispatch<React.SetStateAction<Question[]>>,
 	active: Active,
 	over: Over

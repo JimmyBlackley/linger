@@ -8,7 +8,7 @@ import { ContentArea } from "@/app/ui/app/ContentArea";
 import { Question } from "../types";
 import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
-import reorder from "../lib/app/reorder";
+import { reorder } from "../lib/app/reorder";
 import { addToTimeline } from "../lib/app/addToTimeline";
 
 function App(): JSX.Element {
@@ -116,7 +116,6 @@ function App(): JSX.Element {
 	}
 
 	return (
-		<Suspense fallback={<div>Loading...</div>}>
 			<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
 				<DndContext
 					id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
@@ -134,7 +133,6 @@ function App(): JSX.Element {
 					<DragOverlay>{handleDragOverlay()}</DragOverlay>
 				</DndContext>
 			</div>
-		</Suspense>
 	);
 }
 
