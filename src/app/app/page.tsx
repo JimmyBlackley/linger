@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from 'next/navigation';
 import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
@@ -108,23 +108,25 @@ function App(): JSX.Element {
   }
 
   return (
-    <div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
-      <DndContext
-        id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-        onDragOver={handleDragOver}
-      >
-        <Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
-        <ContentArea currentDragCard={currentDragCard}></ContentArea>
-        <Timeline
-          timelineContentList={timelineContentList}
-          currentDragCard={currentDragCard}
-          className="col-span-2 !self-stretch !w-full"
-        />
-        <DragOverlay>{handleDragOverlay()}</DragOverlay>
-      </DndContext>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
+        <DndContext
+          id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
+          onDragStart={handleDragStart}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+        >
+          <Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
+          <ContentArea currentDragCard={currentDragCard}></ContentArea>
+          <Timeline
+            timelineContentList={timelineContentList}
+            currentDragCard={currentDragCard}
+            className="col-span-2 !self-stretch !w-full"
+          />
+          <DragOverlay>{handleDragOverlay()}</DragOverlay>
+        </DndContext>
+      </div>
+    </Suspense>
   );
 }
 
