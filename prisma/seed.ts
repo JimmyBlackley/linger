@@ -20,11 +20,11 @@ async function main() {
 
   const quizzes = await prisma.quiz.createMany({
     data: [
-      { title: 'Quiz 1', description: 'Description for Quiz 1', creatorId: user.id },
-      { title: 'Quiz 2', description: 'Description for Quiz 2', creatorId: user.id },
-      { title: 'Quiz 3', description: 'Description for Quiz 3', creatorId: user.id },
-      { title: 'Quiz 4', description: 'Description for Quiz 4', creatorId: user.id },
-      { title: 'Quiz 5', description: 'Description for Quiz 5', creatorId: user.id },
+      { title: 'Quiz 1', description: 'Description for Quiz 1', creatorId: user.id, timeline: [] },
+      { title: 'Quiz 2', description: 'Description for Quiz 2', creatorId: user.id, timeline: [] },
+      { title: 'Quiz 3', description: 'Description for Quiz 3', creatorId: user.id, timeline: [] },
+      { title: 'Quiz 4', description: 'Description for Quiz 4', creatorId: user.id, timeline: [] },
+      { title: 'Quiz 5', description: 'Description for Quiz 5', creatorId: user.id, timeline: [] },
     ],
   });
 
@@ -34,13 +34,24 @@ async function main() {
   });
 
   for (const quiz of quizIds) {
-    await prisma.question.createMany({
+    const questions = await prisma.question.createMany({
       data: [
         { text: `Question 1 for ${quiz.title}`, type: 'MULTIPLE_CHOICE', quizId: quiz.id },
         { text: `Question 2 for ${quiz.title}`, type: 'TEXT_INPUT', quizId: quiz.id },
         { text: `Question 3 for ${quiz.title}`, type: 'SLIDER', quizId: quiz.id },
         { text: `Question 4 for ${quiz.title}`, type: 'DRAG_AND_DROP', quizId: quiz.id },
       ],
+    });
+
+    const questionIds = await prisma.question.findMany({
+      where: { quizId: quiz.id },
+      select: { id: true },
+    });
+
+    const timeline = questionIds.map(q => q.id);
+    await prisma.quiz.update({
+      where: { id: quiz.id },
+      data: { timeline },
     });
   }
 

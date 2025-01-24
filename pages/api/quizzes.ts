@@ -3,12 +3,14 @@ import { prisma } from '../../src/app/lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { id, title, creatorId }: { id: string; title: string; creatorId: number } = req.body;
+    const { id, title, description, creatorId, timeline }: { id: string; title: string; description?: string; creatorId: string; timeline: string[] } = req.body;
     try {
       const newQuiz = await prisma.quiz.create({
         data: {
           title,
+          description,
           creatorId,
+          timeline,
         },
       });
       res.status(201).json(newQuiz);
@@ -21,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       if (quizId) {
         const quiz = await prisma.quiz.findUnique({
-          where: { id: Number(quizId) },
+          where: { id: quizId },
           include: {
             questions: true, // Include related questions
           },
