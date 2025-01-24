@@ -58,8 +58,8 @@ function App(): JSX.Element {
       if (active.data.current?.container === "palette") {
         if (over.data.current?.container === "palette" || over.id === "palette") {
           setQuestions((questions) => {
-            const oldIndex = questions.findIndex((questions) => module.id === active.id);
-            const newIndex = questions.findIndex((questions) => module.id === over.id);
+            const oldIndex = questions.findIndex((question) => question.id === active.id);
+            const newIndex = questions.findIndex((question) => question.id === over.id);
             return arrayMove(questions, oldIndex, newIndex);
           });
         } else if ((over && over.data.current?.container === "contentArea") || over.id === "contentArea") {
