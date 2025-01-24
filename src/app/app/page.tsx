@@ -35,7 +35,7 @@ function App(): JSX.Element {
 
 
     fetchQuestions();
-  }, []);
+  }, [quizSearch]);
 
   const [timelineContentList, setTimelineContentList] = useState<Question[]>([
     { id: uuidv4(), text: "Timeline Content 1" },
