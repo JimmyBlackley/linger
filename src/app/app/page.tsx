@@ -20,7 +20,7 @@ function App(): JSX.Element {
 	useEffect(() => {
 		async function fetchQuestions() {
 			try {
-				const response = await fetch(`/api/questions?quizId=${quizSelect || "9"}`);
+				const response = await fetch(`/api/questions?quizId=${quizSelect || "308bd4f9-0962-4541-9254-eade2dccc210"}`);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
@@ -40,7 +40,7 @@ function App(): JSX.Element {
 				return;
 			}
 			try {
-				const response = await fetch(`/api/quizzes?quizId=${quizSelect}`);
+				const response = await fetch(`/api/quizzes?quizId=${quizSelect|| "308bd4f9-0962-4541-9254-eade2dccc210"}`);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
