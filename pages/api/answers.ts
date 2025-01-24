@@ -3,7 +3,7 @@ import { prisma } from "../../src/app/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { questionId, text, isCorrect }: { questionId: number; text: string; isCorrect: boolean } = req.body;
+    const { questionId, text, isCorrect }: { questionId: string; text: string; isCorrect: boolean } = req.body;
 
     try {
       // Fetch the question by its ID
@@ -31,11 +31,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: "Error creating answer" });
     }
   } else if (req.method === "GET") {
-    const { questionId }: { questionId?: number } = req.query;
+    const { questionId }: { questionId?: string } = req.query;
 
     try {
       const answers = await prisma.answer.findMany({
-        where: questionId ? { questionId: Number(questionId) } : {},
+        where: questionId ? { questionId: questionId } : {},
       });
       res.status(200).json(answers);
     } catch (error) {
