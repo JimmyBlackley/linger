@@ -1,6 +1,6 @@
 import React from "react";
 import { SortableCard } from "./SortableCard";
-import { Question } from "@/app/types";
+import { Question } from "@prisma/client";
 import { SortableContext } from "@dnd-kit/sortable";
 import { Active, useDroppable } from "@dnd-kit/core";
 import { MenuItem } from "./MenuItem";

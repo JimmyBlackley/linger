@@ -1,11 +1,11 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { Palette } from "@/app/ui/app/Palette";
 import { Timeline } from "@/app/ui/app/Timeline";
 import { ContentArea } from "@/app/ui/app/ContentArea";
-import { Question } from "../types";
+import { Question } from "@prisma/client";
 import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 import { reorder } from "../lib/app/reorder";

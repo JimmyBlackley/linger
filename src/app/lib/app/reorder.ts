@@ -1,6 +1,6 @@
 import { Active, Over } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { Question } from "@/app/types";
+import { Question } from "@prisma/client";
 
 export function reorder(
 	setQuestions: React.Dispatch<React.SetStateAction<Question[]>>,
