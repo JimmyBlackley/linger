@@ -34,19 +34,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ error: "Error creating or updating question" });
     }
   } else if (req.method === "GET") {
-    const { quizId }: { quizId?: string } = req.query;
+    // logic for GET requests
 
-    try {
-      const questions = await prisma.question.findMany({
-        where: quizId ? { quizId: quizId } : {},
-      });
-      res.status(200).json(questions);
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-      res.status(500).json({ error: "Error fetching questions" });
+    const { quizId, questionId }: { quizId?: string, questionId?: string } = req.query;
+    // if questionId is provided, return the question with that id
+    if (questionId) {
+      try {
+        const question = await prisma.question.findUnique({
+          where: { id: questionId },
+        });
+        res.status(200).json(question);
+      } catch (error) {
+        console.error("Error fetching question:", error);
+        res.status(500).json({ error: "Error fetching question" });
+      }
+      return;
     }
-  } else {
-    res.setHeader("Allow", ["GET", "POST"]);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+    // if quizId is provided, return all questions for that quiz
+    else if (quizId) {
+      try {
+        const questions = await prisma.question.findMany({
+          where: quizId ? { quizId: quizId } : {},
+        });
+        res.status(200).json(questions);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+        res.status(500).json({ error: "Error fetching questions" });
+      }
+    // if no query parameters are provided, return all questions
+    // too many questions exist just to dump them all back
+    } else {
+      res.setHeader("Allow", ["GET", "POST"]);
+      res.status(405).end(`Method ${req.method} Not Allowed`);
+    }
   }
+
 }
