@@ -1,4 +1,1 @@
-export interface Question {
-	id: string;
-	text: string;
-}
+// all types moved to prisma/client
