@@ -26,6 +26,8 @@ function App(): JSX.Element {
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
+				console.log("fetching Questions, here is the returned data:");
+				console.log(response);
 				const data = await response.json();
 				setQuestions(data);
 			} catch (error) {
@@ -46,6 +48,8 @@ function App(): JSX.Element {
 					throw new Error(`Error ${response.statusText}`);
 				}
 				const data = await response.json();
+				console.log("fetching Timeline Content, here is the returned data:");
+				console.log(data);
 				const dataIdList = data.timeline;
 				let newTimelineContentList: Question[] = [];
 				if (dataIdList) {
@@ -75,7 +79,7 @@ function App(): JSX.Element {
 				if (over.data.current?.container === "palette" || over.id === "palette") {
 					reorder(setQuestions, active, over);
 				} else if ((over && over.data.current?.container === "timeline") || over.id === "timeline") {
-					addToTimeline(active.data.current?.name);
+					addToTimeline(active);
 				}
 			}
 			/* dragging item from timeline */
@@ -94,6 +98,7 @@ function App(): JSX.Element {
 		if (over) {
 			console.log(over.data.current?.container);
 			console.log(over.id);
+			console.log(timelineContentList);
 		}
 	}
 

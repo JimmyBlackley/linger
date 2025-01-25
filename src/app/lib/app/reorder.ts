@@ -10,6 +10,8 @@ export function reorder(
 	setQuestions((questions) => {
 		const oldIndex = questions.findIndex((question) => question.id === active.id);
 		const newIndex = questions.findIndex((question) => question.id === over.id);
+		console.log("oldIndex: ", oldIndex);
+		console.log("newIndex: ", newIndex);
 		return arrayMove(questions, oldIndex, newIndex);
 	});
 }
