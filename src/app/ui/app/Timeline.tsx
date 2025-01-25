@@ -1,7 +1,7 @@
 import { SortableContext } from "@dnd-kit/sortable";
 import React from "react";
 import { SortableCard } from "./SortableCard";
-import { Question } from "@/app/types";
+import { Question } from "@prisma/client";
 import { Active, useDroppable } from "@dnd-kit/core";
 
 interface Props {
