@@ -1,10 +1,10 @@
-import React from "react";
-import { SortableCard } from "./SortableCard";
 import { Question } from "@/app/types";
-import { SortableContext } from "@dnd-kit/sortable";
 import { Active, useDroppable } from "@dnd-kit/core";
-import { MenuItem } from "./MenuItem";
+import { SortableContext } from "@dnd-kit/sortable";
 import { motion } from "motion/react";
+import React from "react";
+import { MenuItem } from "./MenuItem";
+import { SortableCard } from "./SortableCard";
 
 interface Props {
 	className?: string;
@@ -23,36 +23,45 @@ export function Palette({ className, questions, currentDragCard }: Props): JSX.E
 	}
 
 	return (
-		<div className={`relative p-2 grid grid-cols-[2rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
+		<div className={`relative p-2 grid grid-cols-[3rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
 			{/* drag overlay */}
 			{currentDragCard?.data.current?.container === "timeline" && (
 				<div className="absolute inset-0 bg-red-500 opacity-50 pointer-events-none"></div>
 			)}
 			{/* top bar */}
-			<MenuItem className="text-2xl">Home</MenuItem>
+			<MenuItem className="rounded-md">Home</MenuItem>
 			<div className="flex justify-end gap-2">
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
+				<MenuItem className="text-2xl w-8 rounded-md">+</MenuItem>
+				<MenuItem className="text-2xl w-8 rounded-md">+</MenuItem>
+				<MenuItem className="text-2xl w-8 rounded-md">+</MenuItem>
+				<MenuItem className="text-2xl w-8 rounded-md">+</MenuItem>
 			</div>
 			{/* side bar */}
-			<div
+			<motion.div
+				whileHover={{ width: "15rem", paddingRight: "0.5rem" }}
 				onMouseEnter={handleMouseEnter}
 				onMouseLeave={handleMouseLeave}
-				className="relative flex flex-col gap-2 w-8"
+				className={`relative flex flex-col gap-2 w-8 bg-purple-600 overflow-hidden`}
 			>
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
-				<MenuItem className="text-2xl">+</MenuItem>
-				{/* sidebar text for icons */}
-				<motion.div
-					animate={{ width: isSidebarExpanded ? "15rem" : "0" }}
-					transition={{ duration: 0.3 }}
-					className="absolute flex flex-col gap-2 top-0 left-full h-full overflow-hidden bg-purple-600"
-				></motion.div>
-			</div>
+				<MenuItem className="w-full h-8 rounded-md flex">
+					<div className={`min-w-10 text-2xl`}>+</div>
+					{isSidebarExpanded && (
+						<div className="whitespace-nowrap flex items-center text-xl">Multiple Choice</div>
+					)}
+				</MenuItem>
+				<MenuItem className="w-full h-8 rounded-md flex">
+					<div className="min-w-10 text-2xl">+</div>
+					{isSidebarExpanded && <div className="whitespace-nowrap flex items-center text-xl">Slider</div>}
+				</MenuItem>
+				<MenuItem className="w-full h-8 rounded-md flex">
+					<div className="min-w-10 text-2xl">+</div>
+					{isSidebarExpanded && <div className="whitespace-nowrap flex items-center text-xl">True False</div>}
+				</MenuItem>
+				<MenuItem className="w-full h-8 rounded-md flex">
+					<div className="min-w-10 text-2xl">+</div>
+					{isSidebarExpanded && <div className="whitespace-nowrap flex items-center text-xl">Map</div>}
+				</MenuItem>
+			</motion.div>
 			<div
 				ref={setNodeRef}
 				className="grid grid-cols-3 auto-rows-min w-full h-full gap-3 p-3 bg-white rounded-[14px] overflow-y-auto"
