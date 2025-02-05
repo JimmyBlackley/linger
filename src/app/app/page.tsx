@@ -1,18 +1,20 @@
 "use client";
-import React, { useState, useEffect, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { ContentArea } from "@/app/ui/app/ContentArea";
 import { Palette } from "@/app/ui/app/Palette";
 import { Timeline } from "@/app/ui/app/Timeline";
-import { ContentArea } from "@/app/ui/app/ContentArea";
-import { Question } from "../types";
-import { DragOverlayCard } from "../ui/app/DragOverlayCard";
+import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { addToTimeline } from "../lib/app/addToTimeline";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
 import { reorder } from "../lib/app/reorder";
-import { addToTimeline } from "../lib/app/addToTimeline";
+import { Question } from "../types";
+import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 
 function App(): JSX.Element {
 	const [questions, setQuestions] = useState<Question[]>([]);
+	const [timelineContentList, setTimelineContentList] = useState<Question[]>([]);
+	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const searchParams = useSearchParams();
 	const quizSelect = searchParams?.get("quiz");
@@ -20,7 +22,9 @@ function App(): JSX.Element {
 	useEffect(() => {
 		async function fetchQuestions() {
 			try {
-				const response = await fetch(`/api/questions?quizId=${quizSelect || "308bd4f9-0962-4541-9254-eade2dccc210"}`);
+				const response = await fetch(
+					`/api/questions?quizId=${quizSelect || "308bd4f9-0962-4541-9254-eade2dccc210"}`
+				);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
@@ -40,7 +44,9 @@ function App(): JSX.Element {
 				return;
 			}
 			try {
-				const response = await fetch(`/api/quizzes?quizId=${quizSelect|| "308bd4f9-0962-4541-9254-eade2dccc210"}`);
+				const response = await fetch(
+					`/api/quizzes?quizId=${quizSelect || "308bd4f9-0962-4541-9254-eade2dccc210"}`
+				);
 				if (!response.ok) {
 					throw new Error(`Error ${response.statusText}`);
 				}
@@ -49,7 +55,13 @@ function App(): JSX.Element {
 				let newTimelineContentList: Question[] = [];
 				if (dataIdList) {
 					newTimelineContentList = dataIdList.map((id: string) => {
-						return questions.find((question) => question.id === id);
+						/* variable to check if question is found */
+						const timelineQuestion = questions.find((question) => question.id === id);
+						if (timelineQuestion) {
+							/* soft copy to prevent modifing original id */
+							const timelineQuestionCopy = { ...timelineQuestion, id: timelineQuestion.id + "-timeline" };
+							return timelineQuestionCopy;
+						}
 					});
 				}
 				setTimelineContentList(newTimelineContentList);
@@ -62,11 +74,8 @@ function App(): JSX.Element {
 		fetchTimelineContent();
 	}, [quizSelect, questions]);
 
-	const [timelineContentList, setTimelineContentList] = useState<Question[]>([]);
-
-	const [currentDragCard, setCurrentDragCard] = useState<Active | null>(null);
-
 	function handleDragStart(e: DragStartEvent) {
+		/* set state for rendering drag overlay */
 		setCurrentDragCard(e.active);
 	}
 
@@ -79,7 +88,8 @@ function App(): JSX.Element {
 				if (over.data.current?.container === "palette" || over.id === "palette") {
 					reorder(setQuestions, active, over);
 				} else if ((over && over.data.current?.container === "timeline") || over.id === "timeline") {
-					addToTimeline(active.data.current?.name);
+					addToTimeline(active.data.current?.text);
+					console.log(active)
 				}
 			}
 			/* dragging item from timeline */
@@ -87,7 +97,7 @@ function App(): JSX.Element {
 				if (over.data.current?.container === "timeline" || over.id === "timeline") {
 					reorder(setTimelineContentList, active, over);
 				} else if (over.data.current?.container === "palette" || over.id === "palette") {
-					deleteFromTimeline(active.data.current?.name);
+					deleteFromTimeline(active.data.current?.textt);
 				}
 			}
 		}
@@ -116,23 +126,23 @@ function App(): JSX.Element {
 	}
 
 	return (
-			<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
-				<DndContext
-					id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
-					onDragStart={handleDragStart}
-					onDragEnd={handleDragEnd}
-					onDragOver={handleDragOver}
-				>
-					<Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
-					<ContentArea currentDragCard={currentDragCard}></ContentArea>
-					<Timeline
-						timelineContentList={timelineContentList}
-						currentDragCard={currentDragCard}
-						className="col-span-2 !self-stretch !w-full"
-					/>
-					<DragOverlay>{handleDragOverlay()}</DragOverlay>
-				</DndContext>
-			</div>
+		<div className="grid grid-cols-2 grid-rows-[75vh_25vh] h-screen bg-variable-collection-bg-grey">
+			<DndContext
+				id={"unique-dnd-context-id-to-fix-nextjs-hydration-error"}
+				onDragStart={handleDragStart}
+				onDragEnd={handleDragEnd}
+				onDragOver={handleDragOver}
+			>
+				<Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
+				<ContentArea currentDragCard={currentDragCard}></ContentArea>
+				<Timeline
+					timelineContentList={timelineContentList}
+					currentDragCard={currentDragCard}
+					className="col-span-2 !self-stretch !w-full"
+				/>
+				<DragOverlay>{handleDragOverlay()}</DragOverlay>
+			</DndContext>
+		</div>
 	);
 }
 
