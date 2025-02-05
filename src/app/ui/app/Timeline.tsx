@@ -1,8 +1,8 @@
+import { Question } from "@/app/types";
+import { Active, useDroppable } from "@dnd-kit/core";
 import { SortableContext } from "@dnd-kit/sortable";
 import React from "react";
 import { SortableCard } from "./SortableCard";
-import { Question } from "@/app/types";
-import { Active, useDroppable } from "@dnd-kit/core";
 
 interface Props {
 	className?: string;
