@@ -26,7 +26,7 @@ export function Palette({ className, questions, currentDragCard }: Props): JSX.E
 		<div className={`relative p-2 grid grid-cols-[3rem_1fr] grid-rows-[2rem_1fr] gap-2 bg-purple-600 ${className}`}>
 			{/* drag overlay */}
 			{currentDragCard?.data.current?.container === "timeline" && (
-				<div className="absolute inset-0 bg-red-500 opacity-50 pointer-events-none"></div>
+				<div className="absolute inset-0 bg-red-500 opacity-50 pointer-events-none z-10"></div>
 			)}
 			{/* top bar */}
 			<MenuItem className="rounded-md">Home</MenuItem>

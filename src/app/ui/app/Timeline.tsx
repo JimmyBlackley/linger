@@ -17,7 +17,7 @@ export function Timeline({ className, timelineContentList, currentDragCard, chil
 		/* outer box */
 		<div ref={setNodeRef} className={`shadow-[0px_-4px_4px_#00000040] h-200px p-[15px] relative ${className}`}>
 			{currentDragCard?.data.current?.container === "palette" && (
-				<div className="absolute inset-0 bg-green-500 opacity-50 pointer-events-none"></div>
+				<div className="absolute inset-0 bg-green-500 opacity-50 pointer-events-none z-10"></div>
 			)}
 			<div className="h-full w-full grow bg-white rounded-[14px] overflow-x-scroll">
 				<SortableContext items={timelineContentList}>
