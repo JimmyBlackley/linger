@@ -3,7 +3,7 @@ import { prisma } from "../../src/app/lib/prisma";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
-    const { id, text, quizId }: { id?: string; text: string; quizId: string } = req.body;
+    const { id, text, quizId, media }: { id?: string; text: string; quizId: string, media: string } = req.body;
     const type = "MULTIPLE_CHOICE"; // Hardcoded question type
 
     try {
@@ -15,6 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             text,
             type,
             quiz: { connect: { id: quizId } }, // Connect the question to the quiz
+            media,
           },
         });
         res.status(200).json(updatedQuestion);
@@ -25,6 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             text,
             type,
             quiz: { connect: { id: quizId } }, // Connect the question to the quiz
+            media,
           },
         });
         res.status(201).json(newQuestion);

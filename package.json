@@ -16,6 +16,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@prisma/client": "6.2.1",
+    "@vercel/blob": "^0.27.1",
     "framer-motion": "^11.13.5",
     "motion": "^11.13.4",
     "next": "15.0.3",

@@ -27,6 +27,7 @@ export function SortableCard({ className, children, id, container, text }: Props
 			{...attributes}
 			{...listeners}
 			className={`flex w-[90%] h-[100px] items-center p-4 bg-[#FFF3B0] rounded-[20px] gap-1 select-none ${className}`}
+			onContextMenu={(e) => {e.preventDefault();}} // implement a better, app specific context menu
 		>
 			<div className="w-20 h-20 bg-[#E6DAFF]" />
 			<p className="text-black text-lg flex-1 text-center">{children}</p>

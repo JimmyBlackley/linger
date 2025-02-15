@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent } from "@dnd-kit/core";
 import { Palette } from "@/app/ui/app/Palette";
 import { Timeline } from "@/app/ui/app/Timeline";
-import { ContentArea } from "@/app/ui/app/ContentArea";
+import { PreviewArea, PreviewImage, PreviewText } from "@/app/ui/app/Preview";
 import { Question } from "@prisma/client";
 import { DragOverlayCard } from "../ui/app/DragOverlayCard";
 import { deleteFromTimeline } from "../lib/app/deleteFromTimeline";
@@ -125,7 +125,7 @@ function App(): JSX.Element {
 					onDragOver={handleDragOver}
 				>
 					<Palette questions={questions} currentDragCard={currentDragCard} className="w-full h-full" />
-					<ContentArea currentDragCard={currentDragCard}></ContentArea>
+					<PreviewArea currentDragCard={currentDragCard}></PreviewArea>
 					<Timeline
 						timelineContentList={timelineContentList}
 						currentDragCard={currentDragCard}

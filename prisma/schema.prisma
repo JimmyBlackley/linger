@@ -44,6 +44,7 @@ model Question {
   quizId    String     // Foreign key to Quiz
   quiz      Quiz       @relation(fields: [quizId], references: [id])
   answers   Answer[]   // Relation to possible answers (for multiple choice)
+  media     String?    // URL to media file (image, video, audio)
   createdAt DateTime   @default(now())
 }
 
