@@ -1,15 +1,13 @@
-"use client";
+"use client"
 
 import { useEffect, useState } from "react";
-import { Quiz,  Question } from "@prisma/client";
-// import { put } from "@vercel/blob";
+import { Quiz, Question } from "@prisma/client";
 
 const App = () => {
-
-
   const [questions, setQuestions] = useState<Question[]>([]);
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [text, setText] = useState("");
+  const [media, setMedia] = useState("");
   const [quizId, setQuizId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,23 +29,22 @@ const App = () => {
     fetchQuestions();
   }, [quizId]);
 
-    useEffect(() => {
-      const fetchQuizzes = async () => {
-        try {
-          const response = await fetch("/api/quizzes");
-          if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-          }
-          const data = await response.json();
-          setQuizzes(data);
-        } catch (error) {
-          console.error("Failed to fetch quizzes:", error);
-          setError("Failed to fetch quizzes. Please try again later.");
+  useEffect(() => {
+    const fetchQuizzes = async () => {
+      try {
+        const response = await fetch("/api/quizzes");
+        if (!response.ok) {
+          throw new Error(`Error: ${response.statusText}`);
         }
-      };
-      fetchQuizzes();
-    }, []);
-
+        const data = await response.json();
+        setQuizzes(data);
+      } catch (error) {
+        console.error("Failed to fetch quizzes:", error);
+        setError("Failed to fetch quizzes. Please try again later.");
+      }
+    };
+    fetchQuizzes();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,7 +58,7 @@ const App = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ text, quizId }),
+        body: JSON.stringify({ text, quizId, media }),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
@@ -69,6 +66,7 @@ const App = () => {
       const newQuestion = await response.json();
       setQuestions([...questions, newQuestion]);
       setText("");
+      setMedia("");
       setQuizId(null);
     } catch (error) {
       console.error("Failed to create question:", error);
@@ -77,20 +75,20 @@ const App = () => {
   };
 
   const editQuestion = (question: Question) => async () => {
-    console.log(question)
     const newText = prompt("Enter new question text:", question.text);
+    const newMedia = prompt("Enter new media URL:", question.media || "");
     if (newText === null) {
       return;
     }
     question.text = newText;
+    question.media = newMedia;
     try {
-    
       const response = await fetch(`/api/questions?id=${question.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ id: question.id, text: question.text, quizId: question.quizId }),
+        body: JSON.stringify({ id: question.id, text: question.text, quizId: question.quizId, media: question.media }),
       });
       if (!response.ok) {
         throw new Error(`Error: ${response.statusText}`);
@@ -103,8 +101,7 @@ const App = () => {
       console.error("Failed to update question:", error);
       setError("Failed to update question. Please try again later.");
     }
-  }
-
+  };
 
   return (
     <div className="m-4">
@@ -138,12 +135,17 @@ const App = () => {
           placeholder="Enter question text"
           className="block w-full p-2 border border-gray-300 rounded-md"
         />
+        <input
+          type="text"
+          value={media}
+          onChange={(e) => setMedia(e.target.value)}
+          placeholder="Enter media URL"
+          className="block w-full p-2 border border-gray-300 rounded-md mt-2"
+        />
         <button type="submit" className="mt-2 bg-blue-500 text-white p-2 rounded-md">
           Add Question
         </button>
       </form>
-
-
     </div>
   );
 };
